@@ -53,6 +53,30 @@ describe 'param_comment' do
     end
   end
 
+  context 'valid code with complex type definition' do
+    let(:code) do
+      <<~CODE
+        # @summary
+        #   some class
+        #
+        # @param optional
+        #   Complicated
+        class my_class (
+            Optional[Hash[
+              String,
+              Struct[{
+                test => Optional[Boolean]
+              }]
+            ]] $optional = undef
+        ) {}
+      CODE
+    end
+
+    it 'should not detect any problems' do
+      expect(problems).to have(0).problems
+    end
+  end
+
   context 'code with missing parameter comment' do
     let(:code) do
       <<~CODE

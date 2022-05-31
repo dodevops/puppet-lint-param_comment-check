@@ -50,11 +50,11 @@ end
 def analyze_params(param_tokens) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
   params = []
   current_param = EMPTY_PARAM.dup
-  in_brackets = false
+  brackets = 0
   param_tokens.reject { |token| %i[WHITESPACE NEWLINE].include? token.type }.each do |token|
-    in_brackets = true if token.type == :LBRACK
-    in_brackets = false if token.type == :RBRACK
-    next if in_brackets
+    brackets += 1 if token.type == :LBRACK
+    brackets -= 1 if token.type == :RBRACK
+    next unless brackets.zero?
 
     current_param = analyze_param_token(token, current_param) unless token.type == :COMMA
     if token.type == :COMMA
