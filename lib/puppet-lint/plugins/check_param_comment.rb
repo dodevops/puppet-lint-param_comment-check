@@ -57,6 +57,7 @@ def analyze_params(param_tokens)
       current_param = EMPTY_PARAM.dup
     end
   end
+  params.append(current_param) unless current_param == EMPTY_PARAM
   params
 end
 

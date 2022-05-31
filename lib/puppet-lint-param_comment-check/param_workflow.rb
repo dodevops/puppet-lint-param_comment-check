@@ -11,6 +11,9 @@ class ParamWorkflow < FiniteMachine::Definition
   event :got_description, from: :awaiting_description, to: :awaiting_separator
   event :got_separator, from: :awaiting_separator, to: :awaiting_header
 
+  # for multi-line descriptions
+  event :got_description, from: :awaiting_separator, to: :awaiting_separator
+
   # handling options
   event :got_option_header, from: :awaiting_separator, to: :awaiting_option_description
   event :got_option_description, from: :awaiting_option_description, to: :awaiting_separator

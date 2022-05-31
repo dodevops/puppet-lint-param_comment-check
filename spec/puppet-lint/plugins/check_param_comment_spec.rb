@@ -11,6 +11,7 @@ describe 'param_comment' do
         #
         # @param mandatory
         #   A mandatory parameter
+        #   with two lines
         #
         # @param withdefault
         #   A parameter with a default value
@@ -23,7 +24,7 @@ describe 'param_comment' do
         class my_class (
             String $mandatory,
             Boolean $withdefault = false,
-            Optional[String] $optional = undef,
+            Optional[String] $optional = undef
         ) {}
       CODE
     end
@@ -170,6 +171,9 @@ describe 'param_comment' do
         #   A mandatory parameter
         # @option mandatory [Boolean] :some_option
         #   An option
+        # @option mandatory [String] :some_other_option
+        #   Another option
+        #   with multiple lines of description
         class my_class (
             Hash $mandatory,
         ) {}
