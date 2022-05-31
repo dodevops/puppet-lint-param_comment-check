@@ -77,6 +77,50 @@ describe 'param_comment' do
     end
   end
 
+  context 'valid code with hash default' do
+    let(:code) do
+      <<~CODE
+        # @summary
+        #   some class
+        #
+        # @param hashparam
+        #   A hash
+        class my_class (
+            Hash $hashparam = {
+              somekey => "value"
+            }
+        ) {}
+      CODE
+    end
+
+    it 'should not detect any problems' do
+      expect(problems).to have(0).problems
+    end
+  end
+
+  context 'valid code with hash default with an enclosed hash' do
+    let(:code) do
+      <<~CODE
+        # @summary
+        #   some class
+        #
+        # @param hashparam
+        #   A hash
+        class my_class (
+            Hash $hashparam = {
+              'anotherhash' => {
+                somekey => "value"
+              },
+            },
+        ) {}
+      CODE
+    end
+
+    it 'should not detect any problems' do
+      expect(problems).to have(0).problems
+    end
+  end
+
   context 'code with missing parameter comment' do
     let(:code) do
       <<~CODE
@@ -130,15 +174,14 @@ describe 'param_comment' do
   context 'code with wrongly sorted parameter comments' do
     let(:code) do
       <<~CODE
-        # @param withdefault
-        #   A parameter with a default value
-        #
         # @param mandatory
         #   A mandatory parameter
         #
         # @param optional
         #   An optional parameter
-
+        #
+        # @param withdefault
+        #   A parameter with a default value
         class my_class (
             String $mandatory,
             Boolean $withdefault = false,
@@ -152,7 +195,7 @@ describe 'param_comment' do
     end
 
     it 'should create a warning' do
-      expect(problems).to contain_warning('Parameters sorted wrong').on_line(1).in_column(1)
+      expect(problems).to contain_warning('Parameters sorted wrong').on_line(4).in_column(1)
     end
   end
 
@@ -180,7 +223,7 @@ describe 'param_comment' do
     end
 
     it 'should create a warning' do
-      expect(problems).to contain_warning('Invalid state awaiting_separator for comment @param withdefault')
+      expect(problems).to contain_warning('Can not process the comment \'@param withdefault\' in the state awaiting_separator')
                             .on_line(3)
                             .in_column(1)
     end
@@ -272,7 +315,7 @@ describe 'param_comment' do
 
     it 'should create a warning' do
       expect(problems).to contain_warning(
-                            'Invalid state awaiting_header for comment @option mandatory [Boolean] :some_option'
+                            'Can not process the comment \'@option mandatory [Boolean] :some_option\' in the state awaiting_header'
                           )
                             .on_line(4)
                             .in_column(1)
@@ -326,10 +369,28 @@ describe 'param_comment' do
 
     it 'should create a warning' do
       expect(problems).to contain_warning(
-                            'Invalid state awaiting_separator for comment @param second'
+                            'Can not process the comment \'@param second\' in the state awaiting_separator'
                           )
                             .on_line(5)
                             .in_column(1)
+    end
+  end
+
+  context 'valid code with complex hash option type' do
+    let(:code) do
+      <<~CODE
+        # @param mandatory
+        #   A mandatory parameter
+        # @option mandatory [Optional[String]] :some_option
+        #   An option
+        class my_class (
+            Hash $mandatory,
+        ) {}
+      CODE
+    end
+
+    it 'should detect exactly one problem' do
+      expect(problems).to have(0).problems
     end
   end
 end

@@ -51,9 +51,9 @@ def analyze_params(param_tokens) # rubocop:disable Metrics/AbcSize,Metrics/Cyclo
   params = []
   current_param = EMPTY_PARAM.dup
   brackets = 0
-  param_tokens.reject { |token| %i[WHITESPACE NEWLINE].include? token.type }.each do |token|
-    brackets += 1 if token.type == :LBRACK
-    brackets -= 1 if token.type == :RBRACK
+  param_tokens.reject { |token| %i[WHITESPACE NEWLINE INDENT].include? token.type }.each do |token|
+    brackets += 1 if %i[LBRACK LBRACE].include? token.type
+    brackets -= 1 if %i[RBRACK RBRACE].include? token.type
     next unless brackets.zero?
 
     current_param = analyze_param_token(token, current_param) unless token.type == :COMMA
@@ -62,7 +62,7 @@ def analyze_params(param_tokens) # rubocop:disable Metrics/AbcSize,Metrics/Cyclo
       current_param = EMPTY_PARAM.dup
     end
   end
-  params.append(current_param) unless current_param == EMPTY_PARAM
+  params.append(current_param) unless current_param[:name] == ''
   params
 end
 
@@ -135,9 +135,9 @@ PuppetLint.new_check(:param_comment) do # rubocop:disable Metrics/BlockLength
   def check_comment_order(params)
     param_comments = @comment_engine.params
     param_comments.each_with_index do |param, index|
-      return false unless param[:name] == params[index][:name]
+      return param[:line] unless param[:name] == params[index][:name]
     end
-    true
+    -1
   end
 
   # Check class or defined type indexes
@@ -147,7 +147,9 @@ PuppetLint.new_check(:param_comment) do # rubocop:disable Metrics/BlockLength
       params = analyze_params(index[:param_tokens])
       return false unless check_comments(comments)
       return false unless check_parameters_count(params)
-      return warn('Parameters sorted wrong') unless check_comment_order(params)
+
+      comment_order_line = check_comment_order(params)
+      return warn('Parameters sorted wrong', comment_order_line) unless comment_order_line == -1
     end
     true
   end

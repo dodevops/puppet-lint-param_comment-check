@@ -4,28 +4,30 @@
 EMPTY_PARAM_COMMENT = {
   name: '',
   description: '',
-  options: []
+  options: [],
+  line: -1
 }.freeze
 
 # The empty data of a hash option
 EMPTY_OPTION_COMMENT = {
   name: '',
   type: '',
-  description: ''
+  description: '',
+  line: -1
 }.freeze
 
 # A regular expression describing a parameter header
 REGEXP_PARAM_HEADER = /^@param (?<name>[^ ]+)$/.freeze
 
 # A regular expression describing a hash option header
-REGEXP_OPTION_HEADER = /^@option (?<hash_name>[^ ]+) \[(?<type>[^\]]+)\] :(?<name>[^ ]+)$/.freeze
+REGEXP_OPTION_HEADER = /^@option (?<hash_name>[^ ]+) \[(?<type>.+)\] :(?<name>[^ ]+)$/.freeze
 
 # Comment received in an invalid state
 class InvalidCommentForState < StandardError
   def initialize(comment, state)
     @comment = comment
     @state = state
-    super "Invalid state #{@state} for comment #{@comment.value.strip}"
+    super "Can not process the comment '#{@comment.value.strip}' in the state #{@state}"
   end
 
   attr_reader :comment
@@ -66,7 +68,7 @@ class ParamComments
   # Walk through every comment and transition the workflow fsm accordingly
   #
   # @param comments A list of Comment tokens appearing before the class/defined type header
-  def process(comments) # rubocop:disable Metrics/MethodLength
+  def process(comments) # rubocop:disable Metrics/MethodLength,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
     @current_comment = PuppetLint::Lexer::Token.new(:COMMENT, '', 1, 1)
     comments.each do |comment|
       @current_comment = comment
@@ -87,7 +89,7 @@ class ParamComments
   end
 
   # Called before the got_header event. Interpret the parameter header comment
-  def got_header_trigger(_, comment)
+  def got_header_trigger(_, comment) # rubocop:disable Metrics/AbcSize
     @params_have_started = true
     @current_param[:options].append(@current_option) if @in_option && !@current_option.nil?
     @params.append(@current_param) unless @current_param.nil?
@@ -96,6 +98,7 @@ class ParamComments
     @in_option = false
     comment.value.strip.match(REGEXP_PARAM_HEADER) do |match|
       @current_param[:name] = match.named_captures['name'].strip
+      @current_param[:line] = comment.line
     end
   end
 
@@ -120,6 +123,7 @@ class ParamComments
 
       @current_option[:name] = match.named_captures['name']
       @current_option[:type] = match.named_captures['type']
+      @current_param[:line] = comment.line
     end
   end
 
