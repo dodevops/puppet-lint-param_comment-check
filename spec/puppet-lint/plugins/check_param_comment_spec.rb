@@ -177,7 +177,7 @@ describe 'param_comment' do
     end
 
     it 'should create a warning' do
-      expect(problems).to contain_warning('Invalid param or hash option header')
+      expect(problems).to contain_warning('Invalid param or hash option header: @param mandatory A mandatory parameter')
                             .on_line(1)
                             .in_column(1)
     end
@@ -273,7 +273,7 @@ describe 'param_comment' do
 
     it 'should create a warning' do
       expect(problems).to contain_warning(
-                            'Invalid param or hash option header'
+                            'Invalid param or hash option header: @option mandatory [Boolean] :some_option An option'
                           )
                             .on_line(3)
                             .in_column(1)
