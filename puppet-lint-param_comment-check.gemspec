@@ -12,17 +12,17 @@ Gem::Specification.new do |spec|
     'spec/**/*',
   ]
   spec.test_files  = Dir['spec/**/*']
-  spec.summary     = 'A puppet-lint plugin to check @param comments',
-  spec.description = <<-EOF
+  spec.summary     = 'A puppet-lint plugin to check @param comments'
+  spec.description = <<-DESC
     A puppet-lint plugin to check that manifest files contain properly formatted @param comments.
-  EOF
+  DESC
 
-  spec.add_dependency             'puppet-lint', '> 1.0'
   spec.add_dependency             'finite_machine'
-  spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rspec-its', '~> 1.0'
-  spec.add_development_dependency 'rspec-collection_matchers', '~> 1.0'
+  spec.add_dependency             'puppet-lint', '> 1.0'
   spec.add_development_dependency 'rake'
+  spec.add_development_dependency 'rspec', '~> 3.0'
+  spec.add_development_dependency 'rspec-collection_matchers', '~> 1.0'
+  spec.add_development_dependency 'rspec-its', '~> 1.0'
   spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'simplecov'
 end

@@ -35,7 +35,7 @@ def analyze_param_token(token, current_param)
   case token.type
   when :VARIABLE
     current_param[:name] = token.value
-  when :CLASSREF
+  when :CLASSREF, :TYPE
     current_param[:type] = token.value
   when :EQUALS
     current_param[:has_default] = true
@@ -47,10 +47,15 @@ end
 # Analyze the parameters of a class or a defined type
 #
 # @param param_tokens The parameter tokens to analyze
-def analyze_params(param_tokens)
+def analyze_params(param_tokens) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
   params = []
   current_param = EMPTY_PARAM.dup
+  in_brackets = false
   param_tokens.reject { |token| %i[WHITESPACE NEWLINE].include? token.type }.each do |token|
+    in_brackets = true if token.type == :LBRACK
+    in_brackets = false if token.type == :RBRACK
+    next if in_brackets
+
     current_param = analyze_param_token(token, current_param) unless token.type == :COMMA
     if token.type == :COMMA
       params.append(current_param)
@@ -100,7 +105,7 @@ PuppetLint.new_check(:param_comment) do # rubocop:disable Metrics/BlockLength
       next unless comment.value.match?(/@param/) || comment.value.match?(/@option/)
       next if comment.value.strip.match?(REGEXP_PARAM_HEADER) || comment.value.strip.match?(REGEXP_OPTION_HEADER)
 
-      return warn('Invalid param or hash option header', comment.line, comment.column)
+      return warn("Invalid param or hash option header: #{comment.value.strip}", comment.line, comment.column)
     end
     true
   end

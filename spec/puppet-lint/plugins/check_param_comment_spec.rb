@@ -34,6 +34,25 @@ describe 'param_comment' do
     end
   end
 
+  context 'valid code with spaces in the type' do
+    let(:code) do
+      <<~CODE
+        # @summary
+        #   some class
+        #
+        # @param ensure
+        #   Ensure it
+        class my_class (
+            Enum['present', 'absent'] $ensure = 'present'
+        ) {}
+      CODE
+    end
+
+    it 'should not detect any problems' do
+      expect(problems).to have(0).problems
+    end
+  end
+
   context 'code with missing parameter comment' do
     let(:code) do
       <<~CODE
