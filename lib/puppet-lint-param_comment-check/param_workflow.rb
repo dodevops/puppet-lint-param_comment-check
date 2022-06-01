@@ -2,30 +2,22 @@
 
 require 'finite_machine'
 
-# A finite state machine working through the expected parameter comments
+# A finite state machine working through the expected parameter tokens
 class ParamWorkflow < FiniteMachine::Definition
   initial :start
 
-  event :got_header, from: :start, to: :awaiting_description
-  event :got_header, from: :awaiting_header, to: :awaiting_description
-  event :got_description, from: :awaiting_description, to: :awaiting_separator
-  event :got_separator, from: :awaiting_separator, to: :awaiting_header
+  event :got_type, from: :start, to: :awaiting_name
+  event :got_name, from: :awaiting_name, to: :awaiting_default
 
-  # for multi-line descriptions
-  event :got_description, from: :awaiting_separator, to: :awaiting_separator
+  # For mandatory parameters
+  event :got_end, from: :awaiting_name, to: :start
+  event :got_end, from: :awaiting_default, to: :start
 
-  # handling options
-  event :got_option_header, from: :awaiting_separator, to: :awaiting_option_description
-  event :got_option_description, from: :awaiting_option_description, to: :awaiting_separator
+  # For typeless parameters
+  event :got_name, from: :start, to: :awaiting_default
 
-  # for separators inside descriptions
-  event :got_description, from: :awaiting_header, to: :awaiting_separator
-  event :got_option_description, from: :awaiting_separator, to: :awaiting_separator
-
-  on_before(:got_header) { |event, comment| target.got_header_trigger(event, comment) }
-  on_before(:got_description) { |event, comment| target.got_description_trigger(event, comment) }
-  on_before(:got_option_description) { |event, comment| target.got_description_trigger(event, comment) }
-  on_before(:got_option_header) { |event, comment| target.got_option_header_trigger(event, comment) }
+  on_before(:got_name) { |event, token, type_tokens| target.got_name_trigger(event, token, type_tokens) }
+  on_before(:got_end) { |event, default_tokens| target.got_end_trigger(event, default_tokens) }
 
   handle FiniteMachine::InvalidStateError, with: -> { target.invalid_state }
 end

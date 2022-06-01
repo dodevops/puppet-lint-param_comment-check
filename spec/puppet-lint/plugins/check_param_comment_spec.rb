@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require_relative '../../spec_helper'
 
+# rubocop:disable Metrics/BlockLength
 describe 'param_comment' do
   context 'valid code' do
     let(:code) do
@@ -255,9 +256,11 @@ describe 'param_comment' do
     end
 
     it 'should create a warning' do
-      expect(problems).to contain_warning('Can not process the comment \'@param withdefault\' in the state awaiting_separator')
-                            .on_line(3)
-                            .in_column(1)
+      expect(problems).to contain_warning(
+        'Can not process the comment \'@param withdefault\' in the state awaiting_separator'
+      )
+        .on_line(3)
+        .in_column(1)
     end
   end
 
@@ -276,9 +279,11 @@ describe 'param_comment' do
     end
 
     it 'should create a warning' do
-      expect(problems).to contain_warning('Invalid param or hash option header: @param mandatory A mandatory parameter')
-                            .on_line(1)
-                            .in_column(1)
+      expect(problems).to contain_warning(
+        'Invalid param or hash option header: @param mandatory A mandatory parameter'
+      )
+        .on_line(1)
+        .in_column(1)
     end
   end
 
@@ -321,9 +326,11 @@ describe 'param_comment' do
     end
 
     it 'should create a warning' do
-      expect(problems).to contain_warning('Option references wrong hash @option mandatry [Boolean] :some_option')
-                            .on_line(3)
-                            .in_column(1)
+      expect(problems).to contain_warning(
+        'Option references wrong hash @option mandatry [Boolean] :some_option'
+      )
+        .on_line(3)
+        .in_column(1)
     end
   end
 
@@ -347,10 +354,10 @@ describe 'param_comment' do
 
     it 'should create a warning' do
       expect(problems).to contain_warning(
-                            'Can not process the comment \'@option mandatory [Boolean] :some_option\' in the state awaiting_header'
-                          )
-                            .on_line(4)
-                            .in_column(1)
+        'Can not process the comment \'@option mandatory [Boolean] :some_option\' in the state awaiting_header'
+      )
+        .on_line(4)
+        .in_column(1)
     end
   end
 
@@ -372,10 +379,10 @@ describe 'param_comment' do
 
     it 'should create a warning' do
       expect(problems).to contain_warning(
-                            'Invalid param or hash option header: @option mandatory [Boolean] :some_option An option'
-                          )
-                            .on_line(3)
-                            .in_column(1)
+        'Invalid param or hash option header: @option mandatory [Boolean] :some_option An option'
+      )
+        .on_line(3)
+        .in_column(1)
     end
   end
 
@@ -401,10 +408,10 @@ describe 'param_comment' do
 
     it 'should create a warning' do
       expect(problems).to contain_warning(
-                            'Can not process the comment \'@param second\' in the state awaiting_separator'
-                          )
-                            .on_line(5)
-                            .in_column(1)
+        'Can not process the comment \'@param second\' in the state awaiting_separator'
+      )
+        .on_line(5)
+        .in_column(1)
     end
   end
 
@@ -426,3 +433,4 @@ describe 'param_comment' do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength

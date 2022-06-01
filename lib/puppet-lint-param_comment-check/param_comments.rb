@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'param_comments_workflow'
+
 # The empty data of a parameter
 EMPTY_PARAM_COMMENT = {
   name: '',
@@ -56,7 +58,7 @@ end
 # A helper to analyze parameter comments using the ParamWorkflow fsm
 class ParamComments
   def initialize
-    @workflow = ParamWorkflow.new(self)
+    @workflow = ParamCommentsWorkflow.new(self)
 
     reset
   end
@@ -73,7 +75,7 @@ class ParamComments
   # Walk through every comment and transition the workflow fsm accordingly
   #
   # @param comments A list of Comment tokens appearing before the class/defined type header
-  def process(comments) # rubocop:disable Metrics/MethodLength,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
+  def process(comments) # rubocop:disable Metrics/MethodLength,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity,Metrics/AbcSize
     reset
     @current_comment = PuppetLint::Lexer::Token.new(:COMMENT, '', 1, 1)
     comments.each do |comment|

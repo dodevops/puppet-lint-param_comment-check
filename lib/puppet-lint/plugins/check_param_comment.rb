@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../../puppet-lint-param_comment-check/param_workflow'
 require_relative '../../puppet-lint-param_comment-check/param_comments'
+require_relative '../../puppet-lint-param_comment-check/param'
 
 # The empty data of a parameter
 EMPTY_PARAM = {
@@ -28,44 +28,13 @@ def get_comments(tokens, token_start)
   comments.reject { |comment| comment.type == :NEWLINE }.reverse
 end
 
-# Analyze a parameter token
-#
-# @param token The token to analyze
-# @param current_param the data object for the currently analyzed parameter
-def analyze_param_token(token, current_param)
-  # noinspection RubyCaseWithoutElseBlockInspection
-  case token.type
-  when :VARIABLE
-    current_param[:name] = token.value
-  when :CLASSREF, :TYPE
-    current_param[:type] = token.value
-  when :EQUALS
-    current_param[:has_default] = true
-    current_param[:default] = token.next_token.value
-  end
-  current_param
-end
-
 # Analyze the parameters of a class or a defined type
 #
 # @param param_tokens The parameter tokens to analyze
-def analyze_params(param_tokens) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
-  params = []
-  current_param = EMPTY_PARAM.dup
-  brackets = 0
-  param_tokens.reject { |token| %i[WHITESPACE NEWLINE INDENT].include? token.type }.each do |token|
-    brackets += 1 if %i[LBRACK LBRACE].include? token.type
-    brackets -= 1 if %i[RBRACK RBRACE].include? token.type
-    next unless brackets.zero?
-
-    current_param = analyze_param_token(token, current_param) unless token.type == :COMMA
-    if token.type == :COMMA
-      params.append(current_param)
-      current_param = EMPTY_PARAM.dup
-    end
-  end
-  params.append(current_param) unless current_param[:name] == ''
-  params
+def analyze_params(param_tokens)
+  param_workflow = Param.new
+  param_workflow.process(param_tokens)
+  param_workflow.params
 end
 
 # Find, which parameters in the long list are missing in the short list and return their names
@@ -143,10 +112,14 @@ PuppetLint.new_check(:param_comment) do # rubocop:disable Metrics/BlockLength
   end
 
   # Check class or defined type indexes
-  def check_indexes(indexes)
+  def check_indexes(indexes) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
     indexes.each do |index|
       comments = get_comments(tokens, index[:start])
-      params = analyze_params(index[:param_tokens])
+      begin
+        params = analyze_params(index[:param_tokens])
+      rescue InvalidTokenForState, InvalidDefaultForOptional => e
+        return warn(e.message, e.token.line, e.token.column)
+      end
       return false unless check_comments(comments)
       return false unless check_parameters_count(params)
 
