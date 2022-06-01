@@ -66,6 +66,10 @@ class Param
       @current_token = token
       case token.type
       when :TYPE
+        if @in_default
+          @default_tokens.append(token)
+          next
+        end
         @workflow.got_type unless @in_type
         @in_type = true
         @type_tokens.append(token)
