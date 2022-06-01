@@ -3,14 +3,6 @@
 require_relative '../../puppet-lint-param_comment-check/param_comments'
 require_relative '../../puppet-lint-param_comment-check/param'
 
-# The empty data of a parameter
-EMPTY_PARAM = {
-  name: '',
-  type: '',
-  has_default: false,
-  default: ''
-}.freeze
-
 # Find the header comments for a class or a defined type
 #
 # @param tokens The list of all tokens

@@ -85,11 +85,11 @@ class Param
         @default_tokens = [] unless @in_type && brackets.positive?
         @in_default = false unless @in_type && brackets.positive?
         @type_tokens.append(token) if @in_type
-      when :LBRACE, :LBRACK
+      when :LBRACE, :LBRACK, :LPAREN
         brackets += 1
         @type_tokens.append(token) if @in_type
         @default_tokens.append(token) if @in_default
-      when :RBRACE, :RBRACK
+      when :RBRACE, :RBRACK, :RPAREN
         brackets -= 1
         @type_tokens.append(token) if @in_type
         @default_tokens.append(token) if @in_default

@@ -154,6 +154,26 @@ describe 'param_comment' do
     end
   end
 
+  context 'valid code with parentheses in the parameters' do
+    let(:code) do
+      <<~CODE
+        # @summary
+        #   some class
+        #
+        # @param mandatory
+        #   A mandatory parameter
+        #   with two lines
+        class my_class (
+            String $mandatory = join([0,1,2], ','),
+        ) {}
+      CODE
+    end
+
+    it 'should not detect any problems' do
+      expect(problems).to have(0).problems
+    end
+  end
+
   context 'code with missing parameter comment' do
     let(:code) do
       <<~CODE
