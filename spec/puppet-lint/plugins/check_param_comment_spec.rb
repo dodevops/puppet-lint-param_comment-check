@@ -121,6 +121,38 @@ describe 'param_comment' do
     end
   end
 
+  context 'valid code with multiple classes' do
+    let(:code) do
+      <<~CODE
+        # @summary
+        #   some class
+        #
+        # @param mandatory
+        #   A mandatory parameter
+        #   with two lines
+        class my_class (
+            String $mandatory,
+        ) {}
+
+        # @summary
+        #   some other class
+        #
+        # @see something
+        #
+        # @param mandatory
+        #   A mandatory parameter
+        #   with two lines
+        class my_other_class (
+            String $mandatory,
+        ) {}
+      CODE
+    end
+
+    it 'should not detect any problems' do
+      expect(problems).to have(0).problems
+    end
+  end
+
   context 'code with missing parameter comment' do
     let(:code) do
       <<~CODE

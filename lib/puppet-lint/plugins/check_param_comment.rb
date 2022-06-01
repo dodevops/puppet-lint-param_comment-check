@@ -18,12 +18,14 @@ EMPTY_PARAM = {
 # @return The head comments
 def get_comments(tokens, token_start)
   comments = []
-  token_pointer = token_start
+  token_pointer = token_start - 1
   while token_pointer >= 0
-    comments.append(tokens[token_pointer]) if tokens[token_pointer].type == :COMMENT
+    break unless %i[COMMENT NEWLINE].include? tokens[token_pointer].type
+
+    comments.append(tokens[token_pointer])
     token_pointer -= 1
   end
-  comments.reverse
+  comments.reject { |comment| comment.type == :NEWLINE }.reverse
 end
 
 # Analyze a parameter token

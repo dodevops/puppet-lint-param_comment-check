@@ -58,17 +58,23 @@ class ParamComments
   def initialize
     @workflow = ParamWorkflow.new(self)
 
+    reset
+  end
+
+  def reset
     @current_param = nil
     @current_option = nil
     @in_option = false
     @params_have_started = false
     @params = []
+    @workflow.restore!(:start)
   end
 
   # Walk through every comment and transition the workflow fsm accordingly
   #
   # @param comments A list of Comment tokens appearing before the class/defined type header
   def process(comments) # rubocop:disable Metrics/MethodLength,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
+    reset
     @current_comment = PuppetLint::Lexer::Token.new(:COMMENT, '', 1, 1)
     comments.each do |comment|
       @current_comment = comment
