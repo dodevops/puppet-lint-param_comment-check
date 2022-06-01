@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name        = 'puppet-lint-param_comment-check'
-  spec.version     = '0.1.6'
+  spec.version     = '0.1.7'
   spec.homepage    = 'https://github.com/dodevops/puppet-lint-param_comment-check'
   spec.license     = 'MIT'
   spec.author      = 'Dennis Ploeger'
