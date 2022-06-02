@@ -38,4 +38,4 @@ The workflow used by the fsm can be visualized like this:
 
 To use the plugin, add the following line to the Gemfile:
 
-    gem 'puppet-lint-summary_param-check'
+    gem 'puppet-lint-param_comment-check'
