@@ -56,7 +56,7 @@ PuppetLint.new_check(:param_comment) do # rubocop:disable Metrics/BlockLength
   def check_comment_format(comments)
     begin
       @comment_engine.process(comments)
-    rescue InvalidCommentForState, OptionDoesntMatchHash => e
+    rescue InvalidCommentForState, OptionDoesntMatchHash, MissingLastLine => e
       return warn(e.message, e.comment.line, e.comment.column)
     end
     true
