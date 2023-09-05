@@ -21,7 +21,7 @@ describe 'param_comment' do
         #
         # @param optional
         #   An optional parameter
-        #
+
         class my_class (
             String $mandatory,
             Boolean $withdefault = false,
@@ -43,7 +43,6 @@ describe 'param_comment' do
         #
         # @param ensure
         #   Ensure it
-        #
         class my_class (
             Enum['present', 'absent'] $ensure = 'present'
         ) {}
@@ -63,7 +62,6 @@ describe 'param_comment' do
         #
         # @param optional
         #   Complicated
-        #
         class my_class (
             Optional[Hash[
               String,
@@ -88,7 +86,6 @@ describe 'param_comment' do
         #
         # @param hashparam
         #   A hash
-        #
         class my_class (
             Hash $hashparam = {
               somekey => "value"
@@ -110,7 +107,6 @@ describe 'param_comment' do
         #
         # @param hashparam
         #   A hash
-        #
         class my_class (
             Hash $hashparam = {
               'anotherhash' => {
@@ -135,7 +131,6 @@ describe 'param_comment' do
         # @param mandatory
         #   A mandatory parameter
         #   with two lines
-        #
         class my_class (
             String $mandatory,
         ) {}
@@ -148,7 +143,6 @@ describe 'param_comment' do
         # @param mandatory
         #   A mandatory parameter
         #   with two lines
-        #
         class my_other_class (
             String $mandatory,
         ) {}
@@ -169,7 +163,6 @@ describe 'param_comment' do
         # @param mandatory
         #   A mandatory parameter
         #   with two lines
-        #
         class my_class (
             String $mandatory = join([0,1,2], ','),
         ) {}
@@ -189,7 +182,7 @@ describe 'param_comment' do
         #
         # @param withdefault
         #   A parameter with a default value
-        #
+
         class my_class (
             String $mandatory,
             Boolean $withdefault = false,
@@ -215,7 +208,7 @@ describe 'param_comment' do
         #
         # @param withdefault
         #   A parameter with a default value
-        #
+
         class my_class (
             String $mandatory,
         ) {}
@@ -242,7 +235,6 @@ describe 'param_comment' do
         #
         # @param withdefault
         #   A parameter with a default value
-        #
         class my_class (
             String $mandatory,
             Boolean $withdefault = false,
@@ -270,7 +262,7 @@ describe 'param_comment' do
         #
         # @param optional
         #   An optional parameter
-        #
+
         class my_class (
             String $mandatory,
             Boolean $withdefault = false,
@@ -296,7 +288,6 @@ describe 'param_comment' do
     let(:code) do
       <<~CODE
         # @param mandatory A mandatory parameter
-        #
         class my_class (
             String $mandatory,
         ) {}
@@ -326,7 +317,6 @@ describe 'param_comment' do
         # @option mandatory [String] :some_other_option
         #   Another option
         #   with multiple lines of description
-        #
         class my_class (
             Hash $mandatory,
         ) {}
@@ -345,7 +335,6 @@ describe 'param_comment' do
         #   A mandatory parameter
         # @option mandatry [Boolean] :some_option
         #   An option
-        #
         class my_class (
             Hash $mandatory,
         ) {}
@@ -373,7 +362,6 @@ describe 'param_comment' do
         #
         # @option mandatory [Boolean] :some_option
         #   An option
-        #
         class my_class (
             Hash $mandatory,
         ) {}
@@ -399,7 +387,6 @@ describe 'param_comment' do
         # @param mandatory
         #   A mandatory parameter
         # @option mandatory [Boolean] :some_option An option
-        #
         class my_class (
             Hash $mandatory,
         ) {}
@@ -428,7 +415,6 @@ describe 'param_comment' do
         #   An option
         # @param second
         #   Something else
-        #
         class my_class (
             Hash $mandatory,
             String $second,
@@ -456,35 +442,14 @@ describe 'param_comment' do
         #   A mandatory parameter
         # @option mandatory [Optional[String]] :some_option
         #   An option
-        #
         class my_class (
             Hash $mandatory,
         ) {}
       CODE
     end
 
-    it 'should detect no problems' do
-      expect(problems).to have(0).problems
-    end
-  end
-
-  context 'missing last blank line' do
-    let(:code) do
-      <<~CODE
-        # @summary
-        #   some class
-        #
-        # @param mandatory
-        #   A mandatory parameter
-        #   with two lines
-        class my_class (
-            String $mandatory
-        ) {}
-      CODE
-    end
-
     it 'should detect exactly one problem' do
-      expect(problems).to have(1).problems
+      expect(problems).to have(0).problems
     end
   end
 end

@@ -7,7 +7,6 @@ This is an extensive, opinionated check for valid parameter comments. It checks 
 - The description of a @param tag is always indented in the next line
 - The @option comments directly follow the corresponding hash @param tag without a separator
 - @param tags are sorted like the parameters they document
-- The last line of the comment is an empty line
 
 ```
 # @param mandatory
@@ -20,7 +19,7 @@ This is an extensive, opinionated check for valid parameter comments. It checks 
 #
 # @param optional
 #   An optional parameter
-#
+
 class my_class {
     Hash $mandatory,
     Boolean $withdefault = false,

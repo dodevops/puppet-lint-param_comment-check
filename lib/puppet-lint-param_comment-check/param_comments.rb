@@ -55,16 +55,6 @@ class OptionDoesntMatchHash < StandardError
   attr_reader :comment
 end
 
-# There was no empty last line after parameters
-class MissingLastLine < StandardError
-  def initialize(comment)
-    @comment = comment
-    super 'Missing last blank line after parameters'
-  end
-
-  attr_reader :comment
-end
-
 # A helper to analyze parameter comments using the ParamWorkflow fsm
 class ParamComments
   def initialize
@@ -104,7 +94,6 @@ class ParamComments
       end
     end
     @params.append(@current_param) unless @current_param.nil?
-    raise MissingLastLine, @current_comment unless @workflow.current == :awaiting_header
   end
 
   # Called before the got_header event. Interpret the parameter header comment
